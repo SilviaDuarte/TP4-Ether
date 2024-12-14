@@ -1,0 +1,26 @@
+body {
+    background: linear-gradient(to right, #f3f4f6, #e5e7eb);
+    min-height: 100vh;
+}
+
+.section {
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    background-color: white;
+    border-radius: 8px;
+    padding: 1rem;
+}
+
+.highlight {
+    color: #2563eb;
+}
+
+.grid-container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); /* 3 columnas de igual ancho */
+    grid-template-rows: repeat(2, auto);  /* 2 filas con altura automática */
+    gap: 1.5rem; /* Espacio entre filas y columnas */
+}
+
+.hidden {
+    display: none;
+}
