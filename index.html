@@ -18,10 +18,10 @@
 
         <!-- Estado de conexión -->
         <div class="text-center mb-6">
-            <button id="btnConnect" class="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 transition">
+            <button id="btnConnect" class="bg-purple-700 text-white px-6 py-2 rounded-md hover:bg-purple-800 transition">
                 Conectar Wallet
             </button>
-            <button id="btnDisconnect" class="bg-red-500 text-white px-6 py-2 rounded-md hover:bg-red-600 transition mt-4 hidden">
+            <button id="btnDisconnect" class="bg-red-700 text-white px-6 py-2 rounded-md hover:bg-red-800 transition mt-4 hidden">
                 Desconectar
             </button>
         </div>
@@ -56,10 +56,10 @@
             <div id="addLiquidityFields" class="section">
                 <h2 class="text-2xl font-bold text-gray-800 mb-4">Añadir Liquidez</h2>
                 <label for="addTokenA" class="block text-gray-700">Monto de TokenA:</label>
-                <input type="number" id="addTokenA" placeholder="Cantidad" class="w-full mt-2 p-2 border rounded-md">
+                <input type="number" id="addTokenA" placeholder="Cantidad en wTKA" class="w-full mt-2 p-2 border rounded-md">
                 <label for="addTokenB" class="block text-gray-700 mt-4">Monto de TokenB:</label>
-                <input type="number" id="addTokenB" placeholder="Cantidad" class="w-full mt-2 p-2 border rounded-md">
-                <button id="btnAddLiquidity" class="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 transition mt-4">
+                <input type="number" id="addTokenB" placeholder="Cantidad en wTKB" class="w-full mt-2 p-2 border rounded-md">
+                <button id="btnAddLiquidity" class="bg-purple-700 text-white px-6 py-2 rounded-md hover:bg-purple-800 transition mt-4">
                     Añadir Liquidez
                 </button>
             </div>
@@ -67,15 +67,15 @@
             <!-- Intercambiar tokens -->
             <div id="swapFields" class="section">
                 <h2 id="swapTitle" class="text-2xl font-bold text-gray-800 mb-4">Intercambiar Tokens</h2>
-                <button id="btnSwapAtoB" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition">
+                <button id="btnSwapAtoB" class="bg-purple-700 text-white px-4 py-2 rounded-md hover:bg-purple-800 transition">
                     TokenA → TokenB
                 </button>
-                <button id="btnSwapBtoA" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition mt-2">
+                <button id="btnSwapBtoA" class="bg-purple-700 text-white px-4 py-2 rounded-md hover:bg-purple-700 transition mt-2">
                     TokenB → TokenA
                 </button>
                 <label for="swapAmount" class="block text-gray-700 mt-4">Monto:</label>
-                <input type="number" id="swapAmount" placeholder="Cantidad" class="w-full mt-2 p-2 border rounded-md">
-                <button id="btnSwap" class="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 transition mt-4">
+                <input type="number" id="swapAmount" placeholder="Cantidad en wTK" class="w-full mt-2 p-2 border rounded-md">
+                <button id="btnSwap" class="bg-purple-700 text-white px-6 py-2 rounded-md hover:bg-purple-800 transition mt-4">
                     Realizar Intercambio
                 </button>
             </div>
@@ -84,10 +84,10 @@
             <div id="removeLiquidityFields" class="section">
                 <h2 class="text-2xl font-bold text-gray-800 mb-4">Eliminar Liquidez</h2>
                 <label for="removeTokenAAmount" class="block text-gray-700">Monto de TokenA:</label>
-                <input type="number" id="removeTokenAAmount" placeholder="Cantidad" class="w-full mt-2 p-2 border rounded-md">
+                <input type="number" id="removeTokenAAmount" placeholder="Cantidad en wTKA" class="w-full mt-2 p-2 border rounded-md">
                 <label for="removeTokenBAmount" class="block text-gray-700 mt-4">Monto de TokenB:</label>
-                <input type="number" id="removeTokenBAmount" placeholder="Cantidad" class="w-full mt-2 p-2 border rounded-md">
-                <button id="btnRemoveLiquidity" class="bg-red-500 text-white px-6 py-2 rounded-md hover:bg-red-600 transition mt-4">
+                <input type="number" id="removeTokenBAmount" placeholder="Cantidad en wTKB" class="w-full mt-2 p-2 border rounded-md">
+                <button id="btnRemoveLiquidity" class="bg-red-700 text-white px-6 py-2 rounded-md hover:bg-red-800 transition mt-4">
                     Eliminar Liquidez
                 </button>
             </div>

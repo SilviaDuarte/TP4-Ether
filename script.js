@@ -29,12 +29,12 @@ async function connectWallet() {
     tokenBContract = new ethers.Contract(TOKEN_B_ADDRESS, abiERC20, signer);
     dexContract = new ethers.Contract(SIMPLE_DEX_ADDRESS, abiSimpleDEX, signer);
 
-    document.getElementById("status").innerHTML = "Estado: <span class='font-semibold text-green-600'>Conectado</span>";
+    userAddress = await signer.getAddress();
+    document.getElementById("status").innerHTML = `Conectado a <span class='font-semibold text-green-900'>${userAddress}</span>`;
     document.getElementById("btnConnect").classList.add("hidden");
     document.getElementById("btnDisconnect").classList.remove("hidden");
     document.getElementById("mainContent").classList.remove("hidden");
-
-    userAddress = await signer.getAddress();
+   
     await updateSignerInfo();
     await updatePoolInfo();
 }
@@ -44,9 +44,9 @@ async function updateSignerInfo(){
     tokenABalance = await tokenAContract.balanceOf(userAddress);
     tokenBBalance = await tokenBContract.balanceOf(userAddress);
     document.getElementById("tokenABalance").style.display = "block";
-        document.getElementById("tokenABalance").innerText = `Balance TokenA: ${ethers.formatUnits(tokenABalance, 18)}`;
+        document.getElementById("tokenABalance").innerText = `Balance TokenA: ${ethers.formatUnits(tokenABalance, 1)} wTKA`;
         document.getElementById("tokenBBalance").style.display = "block";
-        document.getElementById("tokenBBalance").innerText = `Balance TokenB: ${ethers.formatUnits(tokenBBalance, 18)}`;
+        document.getElementById("tokenBBalance").innerText = `Balance TokenB: ${ethers.formatUnits(tokenBBalance, 1)} wTKB`;
 
 }
 
@@ -62,16 +62,16 @@ async function updatePoolInfo() {
             const decimalsA = await tokenAContract.decimals();
             const decimalsB = await tokenBContract.decimals();
 
-            const formattedLiquidityA = ethers.formatUnits(liquidityA, decimalsA);
-            const formattedLiquidityB = ethers.formatUnits(liquidityB, decimalsB);
+            const formattedLiquidityA = ethers.formatUnits(liquidityA, 1);
+            const formattedLiquidityB = ethers.formatUnits(liquidityB, 1);
 
             const formattedPriceA = ethers.formatUnits(priceA, decimalsB); // Precio de A en términos de B
             const formattedPriceB = ethers.formatUnits(priceB, decimalsA); // Precio de B en términos de A
 
-            document.getElementById("liquidityTokenA").innerText = `TokenA disponible: ${formattedLiquidityA}`;
-            document.getElementById("liquidityTokenB").innerText = `TokenB disponible: ${formattedLiquidityB}`;
-            document.getElementById("priceTokenA").innerText = `TokenA = ${formattedPriceA} TKB`;
-            document.getElementById("priceTokenB").innerText = `TokenB = ${formattedPriceB} TKA`;
+            document.getElementById("liquidityTokenA").innerText = `TokenA disponible: ${formattedLiquidityA} wTKA`;
+            document.getElementById("liquidityTokenB").innerText = `TokenB disponible: ${formattedLiquidityB} wTKB`;
+            document.getElementById("priceTokenA").innerText = `TokenA = ${parseFloat(formattedPriceA).toFixed(2)} TKB`;
+            document.getElementById("priceTokenB").innerText = `TokenB = ${parseFloat(formattedPriceB).toFixed(2)} TKA`;
         } catch (error) {
             console.error("Error actualizando información del pool:", error);
             alert("No se pudo actualizar la información del pool. Revisa la consola para más detalles.");
@@ -91,18 +91,24 @@ function updateSwapTitle() {
 async function swapTokens() {
         const amount = document.getElementById("swapAmount").value;
 
-        if (swapDirection === "AtoB") {
-            // Intercambiar TokenA por TokenB
-            await tokenAContract.approve(SIMPLE_DEX_ADDRESS, ethers.parseUnits(amount, 18));
-            const tx = await dexContract.swapAforB(ethers.parseUnits(amount, 18));
-            await tx.wait();
-            alert("Intercambio de TokenA por TokenB realizado exitosamente!");
-        } else if (swapDirection === "BtoA") {
-            // Intercambiar TokenB por TokenA
-            await tokenBContract.approve(SIMPLE_DEX_ADDRESS, ethers.parseUnits(amount, 18));
-            const tx = await dexContract.swapBforA(ethers.parseUnits(amount, 18));
-            await tx.wait();
-            alert("Intercambio de TokenB por TokenA realizado exitosamente!");
+        try{
+            if (swapDirection === "AtoB") {
+                // Intercambiar TokenA por TokenB
+                await tokenAContract.approve(SIMPLE_DEX_ADDRESS, ethers.parseUnits(amount, 1));
+                const tx = await dexContract.swapAforB(ethers.parseUnits(amount, 1));
+                await tx.wait();
+                alert("Intercambio de TokenA por TokenB realizado exitosamente!");
+            } else if (swapDirection === "BtoA") {
+                // Intercambiar TokenB por TokenA
+                await tokenBContract.approve(SIMPLE_DEX_ADDRESS, ethers.parseUnits(amount, 1));
+                const tx = await dexContract.swapBforA(ethers.parseUnits(amount, 1));
+                await tx.wait();
+                alert("Intercambio de TokenB por TokenA realizado exitosamente!");
+            }
+        } catch(error){
+            console.error("Error al intercambiar tokens:", error);
+            const errorMessage = error.message || error.toString(); const truncatedError = errorMessage.length > 75 ? errorMessage.slice(0, 75) + "...":errorMessage;
+            alert(`No se pudo intercambiar tokens. Error: ${truncatedError}`);
         }
         // Limpiar el campo del formulario
         document.getElementById("swapAmount").value = "";
@@ -115,12 +121,24 @@ async function addLiquidity() {
         console.log("AmountA:", amountA); // Check the value of 'amountA'
         const amountB = document.getElementById("addTokenB").value;
 
-        await tokenAContract.approve(SIMPLE_DEX_ADDRESS, ethers.parseUnits(amountA, 18));
-        await tokenBContract.approve(SIMPLE_DEX_ADDRESS, ethers.parseUnits(amountB, 18));
+        if (!amountA || isNaN(amountA) || parseFloat(amountA) <= 0 || 
+        !amountB || isNaN(amountB) || parseFloat(amountB) <= 0) {
+        alert("Por favor, introduce cantidades válidas para ambos tokens.");
+        return;
+        }
+        try{
+            await tokenAContract.approve(SIMPLE_DEX_ADDRESS, ethers.parseUnits(amountA, 1));
+            await tokenBContract.approve(SIMPLE_DEX_ADDRESS, ethers.parseUnits(amountB, 1));
 
-        const tx = await dexContract.addLiquidity(ethers.parseUnits(amountA, 18), ethers.parseUnits(amountB, 18));
-        await tx.wait();
-        alert(`Liquidez añadida exitosamente: ${amountA}TKA y ${amountB}TKB`);
+            const tx = await dexContract.addLiquidity(ethers.parseUnits(amountA, 1), ethers.parseUnits(amountB, 1));
+            await tx.wait();
+        alert(`Liquidez añadida exitosamente: ${amountA} wTKA y ${amountB} wTKB`);
+        } catch (error) {
+            console.error("Error al añadir liquidez:", error);
+            const errorMessage = error.message || error.toString(); const truncatedError = errorMessage.length > 75 ? errorMessage.slice(0, 75) + "...":errorMessage;
+            alert(`No se pudo añadir la liquidez. Error: ${truncatedError}`);
+
+        }
         // Limpiar los campos del formulario
         document.getElementById("addTokenA").value = "";
         document.getElementById("addTokenB").value = "";
@@ -140,31 +158,35 @@ async function removeLiquidity() {
         }
 
         try {
-            // Convierte los montos a unidades apropiadas (ejemplo: 18 decimales)
-            const parsedAmountA = ethers.parseUnits(amountA, 18);
-            const parsedAmountB = ethers.parseUnits(amountB, 18);
+            
+            const parsedAmountA = ethers.parseUnits(amountA, 1);
+            const parsedAmountB = ethers.parseUnits(amountB, 1);
 
             // Llama a la función removeLiquidity del contrato
             const tx = await dexContract.removeLiquidity(parsedAmountA, parsedAmountB);
             await tx.wait();
 
-            alert(`Liquidez retirada exitosamente: ${amountA}TKA y ${amountB}TKB`);
+            alert(`Liquidez retirada exitosamente: ${amountA} wTKA y ${amountB} wTKB`);
             // Limpiar los campos del formulario
-            document.getElementById("removeTokenAAmount").value = "";
-            document.getElementById("removeTokenBAmount").value = "";
-            // Actualizar los datos del pool y balances del signer después de la eliminación
-            await updateSignerInfo(); 
-            await updatePoolInfo();
+            
         } catch (error) {
             console.error("Error al eliminar liquidez:", error);
-            alert("No se pudo eliminar la liquidez. Revisa la consola para más detalles.");
+            const errorMessage = error.message || error.toString(); const truncatedError = errorMessage.length > 75 ? errorMessage.slice(0, 75) + "...":errorMessage;
+            alert(`No se pudo eliminar la liquidez. Error: ${truncatedError}`);
+            
         }
+        document.getElementById("removeTokenAAmount").value = "";
+        document.getElementById("removeTokenBAmount").value = "";
+        // Actualizar los datos del pool y balances del signer después de la eliminación
+        await updateSignerInfo(); 
+        await updatePoolInfo();
 }
 async function disconnectWallet() {
     provider = null;
     signer = null;
 
-    statusText.innerHTML = "Estado: <span class='font-semibold text-red-600'>Desconectado</span>";
+    document.getElementById("status").innerHTML = `Desconectado <span class='font-semibold text-green-600'></span>`;
+    //statusText.innerHTML = "Estado: <span class='font-semibold text-red-600'>Desconectado</span>";
     btnConnect.classList.remove('hidden');
     btnDisconnect.classList.add('hidden');
     mainContent.classList.add('hidden'); // Ocultar contenido principal

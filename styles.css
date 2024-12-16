@@ -1,17 +1,17 @@
 body {
-    background: linear-gradient(to right, #f3f4f6, #e5e7eb);
+    background: linear-gradient(to right, #e5e5f7, #f3e5f5);
     min-height: 100vh;
 }
 
 .section {
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    background-color: white;
+    background-color: #d1c4e9;  /* un tono violeta tenue */
     border-radius: 8px;
     padding: 1rem;
 }
 
 .highlight {
-    color: #2563eb;
+    color: #6a0dad; /* un tono violeta */
 }
 
 .grid-container {
